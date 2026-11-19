@@ -1,5 +1,4 @@
-import { clePeriode, decalerPeriode, depuisCle, libellePeriode, versCle } from "./dates";
-
+import { clePeriode, clesDuJour, decalerPeriode, depuisCle, libellePeriode, versCle } from "./dates";
 describe("clePeriode", () => {
   it("renvoie le jour exact", () => {
     expect(clePeriode("jour", new Date(2026, 10, 19))).toBe("2026-11-19");
@@ -51,5 +50,15 @@ describe("libellePeriode", () => {
 describe("versCle et depuisCle", () => {
   it("se répondent l'un à l'autre", () => {
     expect(versCle(depuisCle("2026-02-07"))).toBe("2026-02-07");
+  });
+});
+
+describe("clesDuJour", () => {
+  it("donne les trois périodes d'une date", () => {
+    expect(clesDuJour(new Date(2026, 10, 19))).toEqual({
+      jour: "2026-11-19",
+      semaine: "2026-11-16",
+      mois: "2026-11",
+    });
   });
 });

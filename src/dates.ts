@@ -68,3 +68,10 @@ export function libellePeriode(echelle: Echelle, cle: string): string {
   }
   return `${MOIS[d.getMonth()]} ${d.getFullYear()}`;
 }
+export function clesDuJour(date: Date = new Date()): Record<Echelle, string> {
+  return {
+    jour: clePeriode("jour", date),
+    semaine: clePeriode("semaine", date),
+    mois: clePeriode("mois", date),
+  };
+}

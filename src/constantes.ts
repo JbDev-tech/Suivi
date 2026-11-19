@@ -15,9 +15,9 @@ export const LIBELLES_LONGS: Record<Echelle, string> = {
 };
 
 export const MESSAGES_VIDES: Record<Echelle, string> = {
-  jour: "Rien de prévu aujourd'hui. Ajoute ta première tâche.",
+  jour: "Rien de prévu ce jour. Ajoute une tâche.",
   semaine: "Aucune tâche cette semaine. Prévois ce qui compte.",
-  mois: "Aucune tâche ce mois-ci. Pense plus grand.",
+  mois: "Aucune tâche ce mois. Pense plus grand.",
 };
 
 export const JOURS_SEMAINE = [

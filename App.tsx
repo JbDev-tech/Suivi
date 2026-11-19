@@ -7,10 +7,11 @@ import {
   basculerTache,
   progression,
   supprimerTache,
-  tachesDeLEchelle,
+  tachesDeLaPeriode,
   trierTaches,
 } from "./src/logique";
 import { ECHELLES } from "./src/constantes";
+import { clesDuJour, decalerPeriode } from "./src/dates";
 import { useTheme } from "./src/theme";
 import { Echelle, Tache } from "./src/types";
 import { EnTete } from "./src/composants/EnTete";
@@ -24,6 +25,7 @@ export default function App() {
   const [taches, setTaches] = useState<Tache[]>([]);
   const [charge, setCharge] = useState(false);
   const [echelle, setEchelle] = useState<Echelle>("jour");
+  const [cles, setCles] = useState(clesDuJour);
   const [titre, setTitre] = useState("");
   const [moment, setMoment] = useState<number | undefined>(undefined);
   const [erreur, setErreur] = useState("");
@@ -41,16 +43,19 @@ export default function App() {
     }
   }, [taches, charge]);
 
+  const periode = cles[echelle];
+  const estCourante = periode === clesDuJour()[echelle];
+
   const affichees = useMemo(
-    () => trierTaches(tachesDeLEchelle(taches, echelle)),
-    [taches, echelle]
+    () => trierTaches(tachesDeLaPeriode(taches, echelle, periode)),
+    [taches, echelle, periode]
   );
   const { faites, total } = progression(affichees);
 
   const compteurs = ECHELLES.reduce(
     (acc, e) => ({
       ...acc,
-      [e]: tachesDeLEchelle(taches, e).filter((x) => !x.faite).length,
+      [e]: tachesDeLaPeriode(taches, e, cles[e]).filter((x) => !x.faite).length,
     }),
     {} as Record<Echelle, number>
   );
@@ -60,6 +65,14 @@ export default function App() {
     setMoment(undefined);
   }
 
+  function deplacer(pas: number) {
+    setCles({ ...cles, [echelle]: decalerPeriode(echelle, periode, pas) });
+  }
+
+  function retourAujourdhui() {
+    setCles({ ...cles, [echelle]: clesDuJour()[echelle] });
+  }
+
   function changerTitre(texte: string) {
     setTitre(texte);
     setErreur("");
@@ -67,7 +80,7 @@ export default function App() {
 
   function ajouter() {
     try {
-      setTaches(ajouterTache(taches, titre, echelle, moment));
+      setTaches(ajouterTache(taches, titre, echelle, periode, moment));
       setTitre("");
       setMoment(undefined);
       setErreur("");
@@ -89,7 +102,16 @@ export default function App() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <>
-            <EnTete echelle={echelle} faites={faites} total={total} />
+            <EnTete
+              echelle={echelle}
+              periode={periode}
+              estCourante={estCourante}
+              faites={faites}
+              total={total}
+              onPrecedent={() => deplacer(-1)}
+              onSuivant={() => deplacer(1)}
+              onRetour={retourAujourdhui}
+            />
             <SelecteurEchelle valeur={echelle} onChange={changerEchelle} compteurs={compteurs} />
           </>
         }
