@@ -5,8 +5,11 @@
   "dependencies": {
     "@expo/metro-runtime": "~58.0.17",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@types/jest": "30.0.0",
     "expo": "~58.0.25",
     "expo-status-bar": "~58.0.5",
+    "jest": "~30.5.2",
+    "jest-expo": "~58.0.15",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-native": "0.88.1",
@@ -16,11 +19,15 @@
     "@types/react": "~19.3.0",
     "typescript": "~6.0.3"
   },
+  "jest": {
+    "preset": "jest-expo"
+  },
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test": "jest"
   },
   "private": true
 }

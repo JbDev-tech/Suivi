@@ -10,6 +10,9 @@ export function ajouterTache(
   if (titreNettoye === "") {
     throw new Error("Le titre est vide");
   }
+  if (titreNettoye.length > 100) {
+    throw new Error("Le titre est trop long");
+  }
   const nouvelle: Tache = {
     id: Date.now().toString(),
     titre: titreNettoye,
