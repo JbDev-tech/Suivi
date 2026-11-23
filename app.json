@@ -1,38 +1,38 @@
 {
-  "expo": {
-    "name": "Mon Suivi",
-    "slug": "suivi",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "package": "com.jbdevtech.suivi",
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
-      },
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "5c6485a5-7ef4-480f-807b-6eeb771c07a1"
-      }
-    },
-    "owner": "jbdevtech",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/5c6485a5-7ef4-480f-807b-6eeb771c07a1"
-    }
-  }
+	"expo": {
+		"name": "Mon Suivi",
+		"slug": "suivi",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "automatic",
+		"ios": {
+			"supportsTablet": true
+		},
+		"android": {
+			"package": "com.jbdevtech.suivi",
+			"adaptiveIcon": {
+				"backgroundColor": "#E6F4FE",
+				"foregroundImage": "./assets/android-icon-foreground.png",
+				"backgroundImage": "./assets/android-icon-background.png",
+				"monochromeImage": "./assets/android-icon-monochrome.png"
+			},
+			"predictiveBackGestureEnabled": false
+		},
+		"web": {
+			"favicon": "./assets/favicon.png"
+		},
+		"extra": {
+			"eas": {
+				"projectId": "5c6485a5-7ef4-480f-807b-6eeb771c07a1"
+			}
+		},
+		"owner": "jbdevtech",
+		"runtimeVersion": {
+			"policy": "appVersion"
+		},
+		"updates": {
+			"url": "https://u.expo.dev/5c6485a5-7ef4-480f-807b-6eeb771c07a1"
+		}
+	}
 }
