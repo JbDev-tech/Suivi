@@ -27,6 +27,12 @@
         "projectId": "5c6485a5-7ef4-480f-807b-6eeb771c07a1"
       }
     },
-    "owner": "jbdevtech"
+    "owner": "jbdevtech",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5c6485a5-7ef4-480f-807b-6eeb771c07a1"
+    }
   }
 }
