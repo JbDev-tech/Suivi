@@ -1,4 +1,4 @@
-import { clePeriode } from "./dates";
+import { clePeriode, decalerPeriode } from "./dates";
 import { Echelle, Tache } from "./types";
 
 export type TacheBrute = Omit<Tache, "periode"> & { periode?: string };
@@ -10,6 +10,17 @@ export function migrerTaches(brutes: TacheBrute[]): Tache[] {
   }));
 }
 
+function nettoyerTitre(titre: string): string {
+  const nettoye = titre.trim();
+  if (nettoye === "") {
+    throw new Error("Le titre est vide");
+  }
+  if (nettoye.length > 100) {
+    throw new Error("Le titre est trop long");
+  }
+  return nettoye;
+}
+
 export function ajouterTache(
   taches: Tache[],
   titre: string,
@@ -17,16 +28,9 @@ export function ajouterTache(
   periode: string,
   moment?: number
 ): Tache[] {
-  const titreNettoye = titre.trim();
-  if (titreNettoye === "") {
-    throw new Error("Le titre est vide");
-  }
-  if (titreNettoye.length > 100) {
-    throw new Error("Le titre est trop long");
-  }
   const nouvelle: Tache = {
     id: Date.now().toString(),
-    titre: titreNettoye,
+    titre: nettoyerTitre(titre),
     echelle,
     periode,
     faite: false,
@@ -36,8 +40,43 @@ export function ajouterTache(
   return [...taches, nouvelle];
 }
 
-export function basculerTache(taches: Tache[], id: string): Tache[] {
-  return taches.map((t) => (t.id === id ? { ...t, faite: !t.faite } : t));
+export function basculerTache(
+  taches: Tache[],
+  id: string,
+  maintenant: Date = new Date()
+): Tache[] {
+  return taches.map((t) => {
+    if (t.id !== id) {
+      return t;
+    }
+    if (t.faite) {
+      return { ...t, faite: false, faiteLe: undefined };
+    }
+    return { ...t, faite: true, faiteLe: maintenant.toISOString() };
+  });
+}
+
+export function modifierTache(
+  taches: Tache[],
+  id: string,
+  champs: { titre: string; moment?: number }
+): Tache[] {
+  const titre = nettoyerTitre(champs.titre);
+  return taches.map((t) =>
+    t.id === id ? { ...t, titre, moment: champs.moment } : t
+  );
+}
+
+export function reporterTache(taches: Tache[], id: string, pas: number): Tache[] {
+  return taches.map((t) =>
+    t.id === id
+      ? {
+          ...t,
+          periode: decalerPeriode(t.echelle, t.periode, pas),
+          moment: t.echelle === "mois" ? undefined : t.moment,
+        }
+      : t
+  );
 }
 
 export function supprimerTache(taches: Tache[], id: string): Tache[] {

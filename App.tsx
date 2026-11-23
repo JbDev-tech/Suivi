@@ -11,7 +11,9 @@ import { chargerTaches, sauvegarderTaches } from "./src/stockage";
 import {
   ajouterTache,
   basculerTache,
+  modifierTache,
   progression,
+  reporterTache,
   supprimerTache,
   tachesDeLaPeriode,
   trierTaches,
@@ -25,6 +27,7 @@ import { SelecteurEchelle } from "./src/composants/SelecteurEchelle";
 import { Calendrier } from "./src/composants/calendrier";
 import { CarteTache } from "./src/composants/CarteTache";
 import { FormulaireAjout } from "./src/composants/FormulaireAjout";
+import { FenetreEdition } from "./src/composants/FenetreEdition";
 import { EtatVide } from "./src/composants/EtatVide";
 
 export default function App() {
@@ -38,6 +41,7 @@ export default function App() {
   const [erreur, setErreur] = useState("");
   const [calendrierOuvert, setCalendrierOuvert] = useState(false);
   const [moisCal, setMoisCal] = useState(() => clePeriode("mois", new Date()));
+  const [edition, setEdition] = useState<Tache | null>(null);
 
   useEffect(() => {
     chargerTaches().then((liste) => {
@@ -119,6 +123,24 @@ export default function App() {
     }
   }
 
+  function enregistrerEdition(nouveauTitre: string, nouveauMoment: number | undefined) {
+    if (!edition) {
+      return;
+    }
+    setTaches(
+      modifierTache(taches, edition.id, { titre: nouveauTitre, moment: nouveauMoment })
+    );
+    setEdition(null);
+  }
+
+  function reporterEdition() {
+    if (!edition) {
+      return;
+    }
+    setTaches(reporterTache(taches, edition.id, 1));
+    setEdition(null);
+  }
+
   return (
     <KeyboardAvoidingView
       behavior="padding"
@@ -169,6 +191,7 @@ export default function App() {
           <CarteTache
             tache={item}
             onBasculer={() => setTaches(basculerTache(taches, item.id))}
+            onModifier={() => setEdition(item)}
             onSupprimer={() => setTaches(supprimerTache(taches, item.id))}
           />
         )}
@@ -182,6 +205,15 @@ export default function App() {
         moment={moment}
         onMoment={setMoment}
       />
+      {edition && (
+        <FenetreEdition
+          key={edition.id}
+          tache={edition}
+          onFermer={() => setEdition(null)}
+          onEnregistrer={enregistrerEdition}
+          onReporter={reporterEdition}
+        />
+      )}
     </KeyboardAvoidingView>
   );
 }

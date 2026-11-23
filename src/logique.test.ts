@@ -2,7 +2,9 @@ import {
   ajouterTache,
   basculerTache,
   migrerTaches,
+  modifierTache,
   progression,
+  reporterTache,
   supprimerTache,
   tachesDeLaPeriode,
   TacheBrute,
@@ -143,5 +145,78 @@ describe("migrerTaches", () => {
       creeLe: "2026-11-19T12:00:00.000Z",
     };
     expect(migrerTaches([recente])[0].periode).toBe("2026-12-25");
+  });
+});
+
+describe("basculerTache et date de réalisation", () => {
+  it("enregistre la date quand on coche", () => {
+    const base = [faireTache({ id: "a" })];
+    const resultat = basculerTache(base, "a", new Date("2026-11-20T09:00:00.000Z"));
+    expect(resultat[0].faite).toBe(true);
+    expect(resultat[0].faiteLe).toBe("2026-11-20T09:00:00.000Z");
+  });
+
+  it("efface la date quand on décoche", () => {
+    const base = [
+      faireTache({ id: "a", faite: true, faiteLe: "2026-11-20T09:00:00.000Z" }),
+    ];
+    const resultat = basculerTache(base, "a");
+    expect(resultat[0].faite).toBe(false);
+    expect(resultat[0].faiteLe).toBeUndefined();
+  });
+});
+
+describe("modifierTache", () => {
+  it("change le titre nettoyé et le moment", () => {
+    const base = [faireTache({ id: "a", moment: 9 })];
+    const resultat = modifierTache(base, "a", { titre: "  Nouveau  ", moment: 15 });
+    expect(resultat[0].titre).toBe("Nouveau");
+    expect(resultat[0].moment).toBe(15);
+  });
+
+  it("refuse un titre vide", () => {
+    const base = [faireTache({ id: "a" })];
+    expect(() => modifierTache(base, "a", { titre: "   " })).toThrow("Le titre est vide");
+  });
+
+  it("refuse un titre trop long", () => {
+    const base = [faireTache({ id: "a" })];
+    expect(() => modifierTache(base, "a", { titre: "a".repeat(101) })).toThrow(
+      "Le titre est trop long"
+    );
+  });
+
+  it("ne touche ni la liste d'origine ni les autres tâches", () => {
+    const base = [faireTache({ id: "a" }), faireTache({ id: "b", titre: "Autre" })];
+    const resultat = modifierTache(base, "a", { titre: "Changé" });
+    expect(base[0].titre).toBe("Test");
+    expect(resultat[1].titre).toBe("Autre");
+  });
+});
+
+describe("reporterTache", () => {
+  it("reporte un jour au lendemain en gardant l'heure", () => {
+    const base = [faireTache({ id: "a", periode: "2026-11-30", moment: 15 })];
+    const resultat = reporterTache(base, "a", 1);
+    expect(resultat[0].periode).toBe("2026-12-01");
+    expect(resultat[0].moment).toBe(15);
+  });
+
+  it("reporte une semaine à la suivante", () => {
+    const base = [
+      faireTache({ id: "a", echelle: "semaine", periode: "2026-12-28", moment: 3 }),
+    ];
+    const resultat = reporterTache(base, "a", 1);
+    expect(resultat[0].periode).toBe("2027-01-04");
+    expect(resultat[0].moment).toBe(3);
+  });
+
+  it("reporte un mois au suivant et efface la semaine", () => {
+    const base = [
+      faireTache({ id: "a", echelle: "mois", periode: "2026-12", moment: 5 }),
+    ];
+    const resultat = reporterTache(base, "a", 1);
+    expect(resultat[0].periode).toBe("2027-01");
+    expect(resultat[0].moment).toBeUndefined();
   });
 });

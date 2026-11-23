@@ -43,3 +43,8 @@ export function libelleMoment(echelle: Echelle, moment: number): string {
   if (echelle === "semaine") return JOURS_SEMAINE[moment - 1];
   return `Semaine ${moment}`;
 }
+export const LIBELLES_REPORT: Record<Echelle, string> = {
+  jour: "Reporter à demain",
+  semaine: "Reporter à la semaine prochaine",
+  mois: "Reporter au mois prochain",
+};

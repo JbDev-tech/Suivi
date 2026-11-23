@@ -8,4 +8,5 @@ export type Tache = {
   faite: boolean;
   creeLe: string;
   moment?: number;
+  faiteLe?: string;
 };
