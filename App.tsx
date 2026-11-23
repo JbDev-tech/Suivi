@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { FlatList, KeyboardAvoidingView, StyleSheet } from "react-native";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Pressable,
+  StyleSheet,
+  Text,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { chargerTaches, sauvegarderTaches } from "./src/stockage";
 import {
@@ -11,11 +17,12 @@ import {
   trierTaches,
 } from "./src/logique";
 import { ECHELLES } from "./src/constantes";
-import { clesDuJour, decalerPeriode } from "./src/dates";
+import { clePeriode, clesDuJour, decalerPeriode, depuisCle } from "./src/dates";
 import { useTheme } from "./src/theme";
 import { Echelle, Tache } from "./src/types";
 import { EnTete } from "./src/composants/EnTete";
 import { SelecteurEchelle } from "./src/composants/SelecteurEchelle";
+import { Calendrier } from "./src/composants/calendrier";
 import { CarteTache } from "./src/composants/CarteTache";
 import { FormulaireAjout } from "./src/composants/FormulaireAjout";
 import { EtatVide } from "./src/composants/EtatVide";
@@ -29,6 +36,8 @@ export default function App() {
   const [titre, setTitre] = useState("");
   const [moment, setMoment] = useState<number | undefined>(undefined);
   const [erreur, setErreur] = useState("");
+  const [calendrierOuvert, setCalendrierOuvert] = useState(false);
+  const [moisCal, setMoisCal] = useState(() => clePeriode("mois", new Date()));
 
   useEffect(() => {
     chargerTaches().then((liste) => {
@@ -60,6 +69,16 @@ export default function App() {
     {} as Record<Echelle, number>
   );
 
+  const compteursJours = useMemo(() => {
+    const resultat: Record<string, number> = {};
+    for (const tache of taches) {
+      if (tache.echelle === "jour") {
+        resultat[tache.periode] = (resultat[tache.periode] ?? 0) + 1;
+      }
+    }
+    return resultat;
+  }, [taches]);
+
   function changerEchelle(e: Echelle) {
     setEchelle(e);
     setMoment(undefined);
@@ -71,6 +90,17 @@ export default function App() {
 
   function retourAujourdhui() {
     setCles({ ...cles, [echelle]: clesDuJour()[echelle] });
+  }
+
+  function basculerCalendrier() {
+    if (!calendrierOuvert) {
+      setMoisCal(clePeriode("mois", depuisCle(cles.jour)));
+    }
+    setCalendrierOuvert(!calendrierOuvert);
+  }
+
+  function choisirJour(cle: string) {
+    setCles({ ...cles, jour: cle });
   }
 
   function changerTitre(texte: string) {
@@ -113,6 +143,25 @@ export default function App() {
               onRetour={retourAujourdhui}
             />
             <SelecteurEchelle valeur={echelle} onChange={changerEchelle} compteurs={compteurs} />
+            {echelle === "jour" && (
+              <>
+                <Pressable onPress={basculerCalendrier} style={styles.boutonCalendrier}>
+                  <Text style={[styles.texteCalendrier, { color: t.principal }]}>
+                    {calendrierOuvert ? "Masquer le calendrier" : "Afficher le calendrier"}
+                  </Text>
+                </Pressable>
+                {calendrierOuvert && (
+                  <Calendrier
+                    mois={moisCal}
+                    selection={cles.jour}
+                    aujourdhui={clesDuJour().jour}
+                    compteurs={compteursJours}
+                    onChoisir={choisirJour}
+                    onMois={(pas) => setMoisCal(decalerPeriode("mois", moisCal, pas))}
+                  />
+                )}
+              </>
+            )}
           </>
         }
         ListEmptyComponent={<EtatVide echelle={echelle} />}
@@ -139,4 +188,6 @@ export default function App() {
 
 const styles = StyleSheet.create({
   page: { flex: 1, paddingTop: 56, paddingHorizontal: 20 },
+  boutonCalendrier: { alignSelf: "flex-start", paddingVertical: 4, marginBottom: 12 },
+  texteCalendrier: { fontSize: 14, fontWeight: "700" },
 });

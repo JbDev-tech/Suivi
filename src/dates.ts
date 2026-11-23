@@ -75,3 +75,27 @@ export function clesDuJour(date: Date = new Date()): Record<Echelle, string> {
     mois: clePeriode("mois", date),
   };
 }
+export type CelluleJour = { cle: string; numero: number } | null;
+
+export function grilleDuMois(cleMois: string): CelluleJour[][] {
+  const premier = depuisCle(cleMois);
+  const annee = premier.getFullYear();
+  const mois = premier.getMonth();
+  const nbJours = new Date(annee, mois + 1, 0).getDate();
+  const decalage = (premier.getDay() + 6) % 7;
+  const cellules: CelluleJour[] = [];
+  for (let i = 0; i < decalage; i++) {
+    cellules.push(null);
+  }
+  for (let jour = 1; jour <= nbJours; jour++) {
+    cellules.push({ cle: versCle(new Date(annee, mois, jour)), numero: jour });
+  }
+  while (cellules.length % 7 !== 0) {
+    cellules.push(null);
+  }
+  const semaines: CelluleJour[][] = [];
+  for (let i = 0; i < cellules.length; i += 7) {
+    semaines.push(cellules.slice(i, i + 7));
+  }
+  return semaines;
+}

@@ -1,4 +1,12 @@
-import { clePeriode, clesDuJour, decalerPeriode, depuisCle, libellePeriode, versCle } from "./dates";
+import {
+  clePeriode,
+  clesDuJour,
+  decalerPeriode,
+  depuisCle,
+  grilleDuMois,
+  libellePeriode,
+  versCle,
+} from "./dates";
 describe("clePeriode", () => {
   it("renvoie le jour exact", () => {
     expect(clePeriode("jour", new Date(2026, 10, 19))).toBe("2026-11-19");
@@ -60,5 +68,22 @@ describe("clesDuJour", () => {
       semaine: "2026-11-16",
       mois: "2026-11",
     });
+  });
+});
+
+describe("grilleDuMois", () => {
+  it("place le 1er novembre 2026 un dimanche", () => {
+    const grille = grilleDuMois("2026-11");
+    expect(grille).toHaveLength(6);
+    expect(grille[0].slice(0, 6)).toEqual([null, null, null, null, null, null]);
+    expect(grille[0][6]).toEqual({ cle: "2026-11-01", numero: 1 });
+    expect(grille[5][0]).toEqual({ cle: "2026-11-30", numero: 30 });
+  });
+
+  it("n'ajoute aucune ligne en trop pour février 2027", () => {
+    const grille = grilleDuMois("2027-02");
+    expect(grille).toHaveLength(4);
+    expect(grille[0][0]).toEqual({ cle: "2027-02-01", numero: 1 });
+    expect(grille[3][6]).toEqual({ cle: "2027-02-28", numero: 28 });
   });
 });
