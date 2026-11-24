@@ -9,10 +9,21 @@
 		"ios": {
 			"supportsTablet": true
 		},
+		"plugins": [
+  [
+    "expo-splash-screen",
+    {
+      "image": "./assets/splash-icon.png",
+      "imageWidth": 200,
+      "resizeMode": "contain",
+      "backgroundColor": "#F6F7FB"
+    }
+  ]
+],
 		"android": {
 			"package": "com.jbdevtech.suivi",
 			"adaptiveIcon": {
-				"backgroundColor": "#E6F4FE",
+				"backgroundColor": "#4F46E5",
 				"foregroundImage": "./assets/android-icon-foreground.png",
 				"backgroundImage": "./assets/android-icon-background.png",
 				"monochromeImage": "./assets/android-icon-monochrome.png"
